@@ -1,30 +1,90 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using API.Data.Services;
+using API.Repository;
+using Books.Models;
+using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class BooksController : ControllerBase
     {
+        //INITIALIZE THE REPO & SERVICE
+        private readonly BooksRepository bookRepo;
+        public BookService _bookService;
+
+        public BooksController(BookService bookService)
+        {
+            bookRepo = new BooksRepository();
+            _bookService = bookService;
+        }
+
         // GET: api/<BooksController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public IActionResult GetBooks()
         {
-            return new string[] { "value1", "value2" };
+            string testUrl = String.Format("https://jsonplaceholder.typicode.com/posts");
+            WebRequest requestObj = WebRequest.Create(testUrl);
+            requestObj.Method = "GET";
+            HttpWebResponse responseObj = null;
+            responseObj = (HttpWebResponse)requestObj.GetResponse();
+
+            string streamResult = null;
+            using (Stream str = responseObj.GetResponseStream())
+            {
+                StreamReader _reader = new StreamReader(str);
+                streamResult = _reader.ReadToEnd();
+                _reader.Close();
+            }
+            return Ok(
+                streamResult
+                );
         }
 
         // GET api/<BooksController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public Book GetBook(int id)
         {
-            return "value "+id;
+            try
+            {
+                List<Book> AllBooks = bookRepo.GetBooks();
+                Book? book = AllBooks.Where(book => book.Id == id).FirstOrDefault();
+                if (book != null)
+                {
+                    return book;
+                }
+                return new Book();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return new Book();
+            }
         }
 
-        //// POST api/<BooksController>
-        //[HttpPost]
-        //public void Post([FromBody] string value)
-        //{
-        //}
+        // POST api/<BooksController>
+        [HttpPost("")]
+        public IActionResult AddNewBook([FromBody] Book NewBook)
+        {
+            try
+            {
+                bookRepo.AddBook(NewBook);
+                return Ok(NewBook.Id);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                ////return Error(e);
+                //var error = new ErrorViewModel
+                //{
+                //    Message = e.Message,
+                //    Details = e.StackTrace,
+                //    ErrorCode = "UNEXPECTED_ERROR"
+                //};
+                return BadRequest(e);
+            }
+        }
 
         //// PUT api/<BooksController>/5
         //[HttpPut("{id}")]
@@ -32,10 +92,13 @@ namespace API.Controllers
         //{
         //}
 
-        //// DELETE api/<BooksController>/5
-        //[HttpDelete("{id}")]
-        //public void Delete(int id)
-        //{
-        //}
+        // DELETE api/<BooksController>/5
+        [HttpDelete("{id}")]
+        public void Delete(int id)
+        {
+            Book? delBook = bookRepo.GetBooks().Where(b => b.Id == id).FirstOrDefault();
+            if (delBook != null) { bookRepo.DeleteBook(delBook); }
+
+        }
     }
 }

@@ -8,12 +8,12 @@ namespace Books.Models
 {
     public class Book
     {
-    public int Id { get; set; }
-        //[Required(ErrorMessage = "Please Add title property")]
+        public int Id { get; set; }
 
+        [Required(ErrorMessage = "Please Add title property")]
         public string? Title { get; set; }
-        public string? Des{ get; set; }
-        //public Book() {  Title,Des} 
+
+        public string? Des { get; set; }
     }
-    
+
 }

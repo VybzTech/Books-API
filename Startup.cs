@@ -1,4 +1,5 @@
 ﻿using API.Data;
+using API.Data.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using System.Configuration;
@@ -13,7 +14,7 @@ namespace API
         {
             Configuration = config;
         }
-        //  CONFIGURE SERVICES
+        //  CONFIGURE SERVICES - Get Called by Runtime 
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
@@ -27,6 +28,8 @@ namespace API
             });
             //  CONFIGURE CONNECTION STRING
             services.AddDbContext<BooksContext>(options => { options.UseSqlServer(Configuration.GetConnectionString("BookStoreCS")); });
+            //  ADD BOOKS SERVICE
+            services.AddTransient<BookService>();
         }
         //  CONFIGURE APP
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -35,9 +38,9 @@ namespace API
             {
                 app.UseDeveloperExceptionPage();
             }
-            //app.UseHttpsRedirection();
-            //app.UseAuthorization();
-            //app.UseAuthentication();
+            app.UseHttpsRedirection();
+            app.UseAuthorization();
+            app.UseAuthentication();
             app.UseRouting();
             
             app.UseEndpoints(endpoints =>
