@@ -1,6 +1,8 @@
 ﻿using API.Data.Services;
 using API.Repository;
 using Books.Models;
+using Google.Apis.Books.v1;
+using Google.Apis.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -12,23 +14,45 @@ namespace API.Controllers
     {
         //INITIALIZE THE REPO & SERVICE
         private readonly BooksRepository bookRepo;
-        public BookService _bookService;
+        //public BookService _bookService;
 
         public BooksController(BookService bookService)
         {
             bookRepo = new BooksRepository();
-            _bookService = bookService;
+            //_bookService = bookService;
         }
 
         // GET: api/<BooksController>
         [HttpGet]
         public IActionResult GetBooks()
         {
+//  DOTNET EXAMPLE
+        // Create the service.
+        // var service = new BooksService(new BaseClientService.Initializer
+        //{
+        //    ApplicationName = "Books Sample",
+        //    ApiKey = "AIzaSyCGNuFFRglnl68jSpKHAb-33SD5CrYiTRE",
+        //});
+
+        //      RUN THE REQUEST
+        // Console.WriteLine("Executing a list request...");
+        //    var result = await service.Apis.List().ExecuteAsync();
+
+        //    // Display the results.
+        //    if  (result.Items != null)
+        //    {
+        //        foreach (DirectoryList.ItemsData api in result.Items)
+        //        {
+        //            Console.WriteLine(api.Id + " - " + api.Title);
+        //        }
+        //    }
+
+            // string testUrl = String.Format("https://www.googleapis.com/books/v1/volumes?q=quilting");
             string testUrl = String.Format("https://jsonplaceholder.typicode.com/posts");
             WebRequest requestObj = WebRequest.Create(testUrl);
             requestObj.Method = "GET";
-            HttpWebResponse responseObj = null;
-            responseObj = (HttpWebResponse)requestObj.GetResponse();
+            try { 
+            HttpWebResponse responseObj = (HttpWebResponse)requestObj.GetResponse();
 
             string streamResult = null;
             using (Stream str = responseObj.GetResponseStream())
@@ -37,9 +61,13 @@ namespace API.Controllers
                 streamResult = _reader.ReadToEnd();
                 _reader.Close();
             }
-            return Ok(
-                streamResult
-                );
+            return Ok(streamResult);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return BadRequest();
+            }
         }
 
         // GET api/<BooksController>/5

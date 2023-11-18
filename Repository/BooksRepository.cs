@@ -8,24 +8,6 @@ namespace API.Repository
 {
     public class BooksRepository : IBookRepository
     {
-        //   Create the service
- //       var service = BooksService(new BaseClientService().HttpClientInitializer{
- //           ApplicationName: "Books",
- //           ApiKey = "[AIzaSyCGNuFFRglnl68jSpKHAb-33SD5CrYiTRE]",
- //           });    
- //   //      RUN THE REQUEST
- //                   Console.WriteLine("api.Id + " - " + api.Title....");
- //       var result = await ServiceCollection.Apis.List().ExecuteAsync();
- //mbox 
-        //    // Display the results.
-        //    if (result.Items != null)
-        //    {
-        //        foreach (DirectoryList.ItemsData api in result.Items)
-        //        {
-        //            Console.WriteLine(api.Id + " - " + api.Title);
-        //        }
-        //    }
-        //}
         private List<Book> books = new List<Book>();
 
         // C    
