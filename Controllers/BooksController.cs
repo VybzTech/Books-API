@@ -49,11 +49,12 @@ namespace API.Controllers
 
             // string testUrl = String.Format("https://www.googleapis.com/books/v1/volumes?q=quilting");
             string testUrl = String.Format("https://jsonplaceholder.typicode.com/posts");
+        // CREATE A WEB REQUEST 
             WebRequest requestObj = WebRequest.Create(testUrl);
             requestObj.Method = "GET";
             try { 
+        //      TRY GETTING A RESPONSE
             HttpWebResponse responseObj = (HttpWebResponse)requestObj.GetResponse();
-
             string streamResult = null;
             using (Stream str = responseObj.GetResponseStream())
             {
